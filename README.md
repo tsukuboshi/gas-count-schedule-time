@@ -46,6 +46,7 @@ npm install
 
 3. asideを初期化しGASプロジェクトを作成
 
+- Project Title：(任意のプロジェクト名)
 - `license-header.txt`の上書き：No
 - `rollup.config.mjs`の上書き：No
 - Script ID：空文字
@@ -75,13 +76,13 @@ rollup.config.mjs already exists
 npx clasp login
 ```
 
-5. 環境変数を設定(変数の値は適宜変更してください)
+5. 環境変数として、Google Calender IDを配列で設定(複数指定できるよう配列にしているだけなので、配列の中身は単一でも問題ありません)
 
 ```bash
 export CALENDER_ID_ARRAY="['xxxxxxxx','xxxxxxxx','xxxxxxxx']"
 ```
 
-6. カレンダーに対応したラベル名を指定(必要ない場合は空文字を設定してください)
+6. 環境変数として、Google Calenderの予定の色に対応したラベル名を指定(使用しない色については空文字を設定してください)
 
 ```bash
 export DEFAULT_LABEL=""
@@ -98,7 +99,7 @@ export BASIL_LABEL=""
 export TOMATO_LABEL=""
 ```
 
-7. 初期化ファイルを作成
+7. 5/6で指定した環境変数を使用し、GAS実行用ファイルである`src/index.ts`を作成
 
 ```bash
 cat <<EOF > src/index.ts
@@ -127,31 +128,14 @@ function handler(): void {
 EOF
 ```
 
-8. GASスクリプトをデプロイ
+8. GASアプリをデプロイ
 
 ```bash
 npm run deploy
 ```
 
-## 実行手順
+## 使い方
 
-1. 以下コマンドより、対象GASのプロジェクトを開いてください。
+以下を参考にしてください。  
 
-```bash
-npx clasp open
-```
-
-2. プロジェクトの「エディター」より、`index.gs`にある`handler`関数を実行してください。(アクセス許可のプロンプトが表示された場合は、許可を実施してください)
-
-3. 以下コマンドより、GASに紐づけれられているスプレッドシートを開くと、現時点の年月の予定がカウントされ稼動工数として記載されています。  
-
-```bash
-npx clasp open --addon
-```
-
-※もし対象の年月を指定したい場合、プロジェクトの「プロジェクト」より、スクリプトプロパティに以下の変数を設定してから`handler`関数を実行してください。
-
-| 変数名 | 値 | 例 |
-| --- | --- | --- |
-| YEAR | 対象の年 | 2024 |
-| MONTH | 対象の月 | 1 |
+[Googleカレンダーの予定から色毎に工数をカウントし集計するGASアプリを作ってみた](https://zenn.dev/tsukuboshi/articles/31c95d863d8896)
