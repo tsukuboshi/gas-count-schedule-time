@@ -197,9 +197,15 @@ function calculateWorkHoursByColor(
 
   // イベントの情報を取得し、色番号ごとに工数を計算
   events.forEach(event => {
-    const status = event.getMyStatus().toString();
-    // ステータスがOWNERまたはYESの予定のみを対象とする
-    if (status === 'OWNER' || status === 'YES') {
+    // イベントのステータスを取得(nullの場合は空文字に変換)
+    const statusObj = event.getMyStatus();
+    let status = statusObj ? statusObj.toString() : '';
+    //  ステータスが設定されていない場合の状態は'ETC'とする
+    if (status === '') {
+      status = 'ETC';
+    }
+    // ステータスがOWNER, YES, ETCの予定のみを対象とする
+    if (status === 'OWNER' || status === 'YES' || status === 'ETC') {
       // イベントの情報を取得
       const eventContent = getEventContent(event);
       let color = eventContent.color;
@@ -278,7 +284,7 @@ function getCurrentYearMonth(): { year: number; month: number } {
 function getEventContent(event: GoogleAppsScript.Calendar.CalendarEvent): {
   title: string;
   color: string;
-  status: GoogleAppsScript.Calendar.GuestStatus;
+  status: string;
   startTime: GoogleAppsScript.Base.Date;
   durationHours: number;
 } {
@@ -291,7 +297,12 @@ function getEventContent(event: GoogleAppsScript.Calendar.CalendarEvent): {
     color = '0';
   }
   // イベントのステータスを取得
-  const status = event.getMyStatus();
+  const statusObj = event.getMyStatus();
+  //  ステータスが設定されていない場合の状態は'ETC'とする
+  let status = statusObj ? statusObj.toString() : '';
+  if (status === '') {
+    status = 'ETC';
+  }
   // イベントの開始日時を取得
   const startTime = event.getStartTime();
   // イベントの終了日時を取得
