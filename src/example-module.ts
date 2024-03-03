@@ -69,6 +69,9 @@ export function main(
     });
   });
 
+  // ヘッダー行をシートに書き込む関数
+  writeHeaderColumn(currentMonthSheet);
+
   // イベントをシートに書き込む
   writeEventsToSheetByColor(
     allEvents,
@@ -142,6 +145,62 @@ function getEventsfromCalendar(
   return events;
 }
 
+// ヘッダー行をシートに書き込む関数
+function writeHeaderColumn(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+  // ヘッダー行を読み込み
+  const cella1 = sheet.getRange('A1');
+  const cellb1 = sheet.getRange('B1');
+  const cellc1 = sheet.getRange('C1');
+  const celld1 = sheet.getRange('D1');
+  const celle1 = sheet.getRange('E1');
+  const cellf1 = sheet.getRange('F1');
+  const cellg1 = sheet.getRange('G1');
+  const celli1 = sheet.getRange('I1');
+  const cellj1 = sheet.getRange('J1');
+
+  // ヘッダー行に値を設定
+  cella1.setValue('カレンダー名');
+  cellb1.setValue('タイトル');
+  cellc1.setValue('色');
+  celld1.setValue('ラベル名');
+  celle1.setValue('ステータス');
+  cellf1.setValue('開始日時');
+  cellg1.setValue('工数(h)');
+  celli1.setValue('ラベル名一覧');
+  cellj1.setValue('工数合計(h)');
+
+  // ヘッダー行のセルを配列にまとめる
+  const cells = [
+    cella1,
+    cellb1,
+    cellc1,
+    celld1,
+    celle1,
+    cellf1,
+    cellg1,
+    celli1,
+    cellj1,
+  ];
+
+  cells.forEach(cell => {
+    // ヘッダー行のフォントを太字に設定
+    cell.setFontWeight('bold');
+    // ヘッダー行の背景色を設定
+    cell.setBackground('orange');
+    // ヘッダー行の枠線を設定
+    cell.setBorder(
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      'black',
+      SpreadsheetApp.BorderStyle.SOLID
+    );
+  });
+}
+
 // イベントをシートに書き込む関数
 function writeEventsToSheetByColor(
   events: GoogleAppsScript.Calendar.CalendarEvent[],
@@ -150,15 +209,6 @@ function writeEventsToSheetByColor(
   colorMap: { [key: string]: string },
   LabelMap: { [key: string]: string }
 ): void {
-  // ヘッダー行を追加
-  sheet.getRange('A1').setValue('カレンダー名');
-  sheet.getRange('B1').setValue('タイトル');
-  sheet.getRange('C1').setValue('色');
-  sheet.getRange('D1').setValue('ラベル名');
-  sheet.getRange('E1').setValue('ステータス');
-  sheet.getRange('F1').setValue('開始日時');
-  sheet.getRange('G1').setValue('工数(h)');
-
   for (let i = 0; i < events.length; i++) {
     // イベントの情報を取得
     const event = events[i];
@@ -235,10 +285,6 @@ function writeWorkHoursToSheet(
   colorMap: { [key: string]: string },
   LabelMap: { [key: string]: string }
 ): void {
-  // ヘッダー行を追加
-  sheet.getRange('I1').setValue('ラベル名');
-  sheet.getRange('J1').setValue('工数合計(h)');
-
   // ヘッダー行を考慮して2行目から開始
   let row = 2;
 
