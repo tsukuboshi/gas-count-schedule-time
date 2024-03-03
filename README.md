@@ -34,6 +34,7 @@ Google Apps Scriptで、Google Calendarの予定をカウントしGoogle SpreadS
 
 ```bash
 git clone https://github.com/tsukuboshi/gas-count-schedule-time.git
+cd gas-count-schedule-time
 ```
 
 2. npmパッケージをインストール
@@ -43,19 +44,44 @@ npm init -y
 npm install
 ```
 
-3. Googleアカウントの認証を実施
+3. asideを初期化しGASプロジェクトを作成
+
+- `license-header.txt`の上書き：No
+- `rollup.config.mjs`の上書き：No
+- Script ID：空文字
+- Script ID for production environment：空文字
+
+```
+npx @google/aside init
+✔ Project Title: … gas-count-schedule-time
+✔ Adding scripts...
+✔ Saving package.json...
+✔ Installing dependencies...
+license-header.txt already exists
+✔ Overwrite … No
+rollup.config.mjs already exists
+✔ Overwrite … No
+✔ Script ID (optional): … 
+✔ Script ID for production environment (optional): … 
+✔ Creating gas-count-schedule-time...
+
+-> Google Sheets Link: https://drive.google.com/open?id=xxx
+-> Apps Script Link: https://script.google.com/d/xxx/edit
+```
+
+4. Googleアカウントの認証を実施
 
 ```bash
 npx clasp login
 ```
 
-4. 環境変数を設定(変数の値は適宜変更してください)
+5. 環境変数を設定(変数の値は適宜変更してください)
 
 ```bash
 export CALENDER_ID_ARRAY="['xxxxxxxx','xxxxxxxx','xxxxxxxx']"
 ```
 
-5. カレンダーに対応したラベル名を指定(必要ない場合は空文字を設定してください)
+6. カレンダーに対応したラベル名を指定(必要ない場合は空文字を設定してください)
 
 ```bash
 export DEFAULT_LABEL=""
@@ -72,13 +98,13 @@ export BASIL_LABEL=""
 export TOMATO_LABEL=""
 ```
 
-6. 初期化ファイルを作成
+7. 初期化ファイルを作成
 
 ```bash
-
 cat <<EOF > src/index.ts
 import { main } from './example-module';
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function handler(): void {
   main(
     ${CALENDER_ID_ARRAY},
@@ -101,7 +127,7 @@ function handler(): void {
 EOF
 ```
 
-7. GASスクリプトをデプロイ
+8. GASスクリプトをデプロイ
 
 ```bash
 npm run deploy
