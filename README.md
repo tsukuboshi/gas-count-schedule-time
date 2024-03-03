@@ -23,8 +23,8 @@ Google Apps Scriptで、Google Calendarの予定をカウントしGoogle SpreadS
 
 以下のソフトウェアの使用を前提とします。
 
-- Node.js；v20以降
-- TypeScript；v5以降
+- Node.js：v20以降
+- TypeScript：v5以降
 
 また、GASを実行するためのGoogleアカウントが必要です。  
 
