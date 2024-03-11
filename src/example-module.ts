@@ -85,7 +85,15 @@ export function main(
   const workHoursMap = calculateWorkHoursByColor(allEvents);
 
   // 計算した工数をシートに記載
-  writeWorkHoursToSheet(currentMonthSheet, workHoursMap, colorMap, LabelMap);
+  const dataRange = writeWorkHoursToSheet(
+    currentMonthSheet,
+    workHoursMap,
+    colorMap,
+    LabelMap
+  );
+
+  // チャートを作成または更新
+  createOrUpdateChart(currentMonthSheet, dataRange);
 }
 
 // 現在の月のシートを取得または作成する関数
@@ -284,14 +292,14 @@ function writeWorkHoursToSheet(
   workHoursMap: Map<string, number>,
   colorMap: { [key: string]: string },
   LabelMap: { [key: string]: string }
-): void {
+): GoogleAppsScript.Spreadsheet.Range {
   // デフォルトカラーの色番号（'0'）の工数をMapから削除する
   workHoursMap.delete('0');
 
   // ヘッダー行を考慮して2行目から開始
   let row = 2;
 
-  // 色番号ごとの工数をシートに書き込む
+  // 色番号ごとの工数をソートされたエントリを基にシートに書き込む
   workHoursMap.forEach((hours, color) => {
     // イベントの色番号を色名に変換
     const colorName = colorMap[color];
@@ -307,6 +315,19 @@ function writeWorkHoursToSheet(
 
   // ラベル名一覧と工数合計が記載されている範囲を指定
   const dataRange = sheet.getRange('I2:J' + (row - 1));
+  return dataRange;
+}
+
+//
+function createOrUpdateChart(
+  sheet: GoogleAppsScript.Spreadsheet.Sheet,
+  dataRange: GoogleAppsScript.Spreadsheet.Range
+): void {
+  // チャートの種類を棒グラフに指定
+  const chartType = Charts.ChartType.BAR;
+
+  // チャートの位置をL列（12列目）に設定
+  const column = 12;
 
   // シートから既存のチャートを取得
   const charts = sheet.getCharts();
@@ -314,20 +335,20 @@ function writeWorkHoursToSheet(
   // 既存のチャートがあれば更新、なければ新しく作成
   if (charts.length > 0) {
     // 既存のチャートを更新
-    const chart = charts[0]; // ここでは最初のチャートを更新対象とします
+    const chart = charts[0];
     const updatedChart = chart
       .modify()
-      .addRange(dataRange) // データ範囲を更新
-      .setPosition(1, 12, 0, 0) // 必要に応じて位置を調整
+      .addRange(dataRange)
+      .setPosition(1, column, 0, 0)
       .build();
     sheet.updateChart(updatedChart);
   } else {
     // 新しいチャートを作成
     const newChart = sheet
       .newChart()
-      .setChartType(Charts.ChartType.BAR) // 帯グラフ（棒グラフ）を指定
+      .setChartType(chartType)
       .addRange(dataRange)
-      .setPosition(1, 12, 0, 0) // チャートをシート上のL列（12列目）の1行目に設定
+      .setPosition(1, column, 0, 0)
       .build();
     sheet.insertChart(newChart);
   }
