@@ -85,7 +85,6 @@ export CALENDER_ID_ARRAY="['xxxxxxxx','xxxxxxxx','xxxxxxxx']"
 6. 環境変数として、Google Calenderの予定の色に対応したラベル名を指定(使用しない色については空文字を設定してください)
 
 ```bash
-export DEFAULT_LABEL=""
 export LAVENDER_LABEL=""
 export SAGE_LABEL=""
 export GRAPE_LABEL=""
@@ -110,7 +109,6 @@ function handler(): void {
   main(
     ${CALENDER_ID_ARRAY},
     {
-      デフォルト: '${DEFAULT_LABEL}',
       ラベンダー: '${LAVENDER_LABEL}',
       セージ: '${SAGE_LABEL}',
       ブドウ: '${GRAPE_LABEL}',

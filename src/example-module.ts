@@ -255,7 +255,7 @@ function calculateWorkHoursByColor(
       status = 'ETC';
     }
     // ステータスがOWNER, YES, ETCの予定のみを対象とする
-    if (status === 'OWNER' || status === 'YES' || status === 'ETC') {
+    if (status === 'OWNER' || status === 'YES') {
       // イベントの情報を取得
       const eventContent = getEventContent(event);
       let color = eventContent.color;
@@ -285,6 +285,9 @@ function writeWorkHoursToSheet(
   colorMap: { [key: string]: string },
   LabelMap: { [key: string]: string }
 ): void {
+  // デフォルトカラーの色番号（'0'）の工数をMapから削除する
+  workHoursMap.delete('0');
+
   // ヘッダー行を考慮して2行目から開始
   let row = 2;
 
@@ -301,6 +304,33 @@ function writeWorkHoursToSheet(
     sheet.getRange('J' + row).setValue(hours);
     row++;
   });
+
+  // ラベル名一覧と工数合計が記載されている範囲を指定
+  const dataRange = sheet.getRange('I2:J' + (row - 1));
+
+  // シートから既存のチャートを取得
+  const charts = sheet.getCharts();
+
+  // 既存のチャートがあれば更新、なければ新しく作成
+  if (charts.length > 0) {
+    // 既存のチャートを更新
+    const chart = charts[0]; // ここでは最初のチャートを更新対象とします
+    const updatedChart = chart
+      .modify()
+      .addRange(dataRange) // データ範囲を更新
+      .setPosition(1, 12, 0, 0) // 必要に応じて位置を調整
+      .build();
+    sheet.updateChart(updatedChart);
+  } else {
+    // 新しいチャートを作成
+    const newChart = sheet
+      .newChart()
+      .setChartType(Charts.ChartType.BAR) // 帯グラフ（棒グラフ）を指定
+      .addRange(dataRange)
+      .setPosition(1, 12, 0, 0) // チャートをシート上のL列（12列目）の1行目に設定
+      .build();
+    sheet.insertChart(newChart);
+  }
 }
 
 // 現在の年と月を取得する関数
