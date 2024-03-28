@@ -73,7 +73,7 @@ export function main(
   writeHeaderColumn(currentMonthSheet);
 
   // イベントをシートに書き込む
-  writeEventsToSheetByColor(
+  writeEventsToSheet(
     allEvents,
     currentMonthSheet,
     calendarNames,
@@ -85,7 +85,7 @@ export function main(
   const workHoursMap = calculateWorkHoursByColor(allEvents);
 
   // 計算した工数をシートに記載
-  const dataRange = writeWorkHoursToSheet(
+  const dataRange = writeSummaryToSheet(
     currentMonthSheet,
     workHoursMap,
     colorMap,
@@ -165,6 +165,7 @@ function writeHeaderColumn(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
   const cellg1 = sheet.getRange('G1');
   const celli1 = sheet.getRange('I1');
   const cellj1 = sheet.getRange('J1');
+  const cellk1 = sheet.getRange('K1');
 
   // ヘッダー行に値を設定
   cella1.setValue('カレンダー名');
@@ -176,6 +177,7 @@ function writeHeaderColumn(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
   cellg1.setValue('工数(h)');
   celli1.setValue('ラベル名一覧');
   cellj1.setValue('工数合計(h)');
+  cellk1.setValue('工数割合(%)');
 
   // ヘッダー行のセルを配列にまとめる
   const cells = [
@@ -188,6 +190,7 @@ function writeHeaderColumn(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
     cellg1,
     celli1,
     cellj1,
+    cellk1,
   ];
 
   cells.forEach(cell => {
@@ -210,7 +213,7 @@ function writeHeaderColumn(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
 }
 
 // イベントをシートに書き込む関数
-function writeEventsToSheetByColor(
+function writeEventsToSheet(
   events: GoogleAppsScript.Calendar.CalendarEvent[],
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
   calendarNames: string[],
@@ -262,7 +265,7 @@ function calculateWorkHoursByColor(
     if (status === '') {
       status = 'ETC';
     }
-    // ステータスがOWNER, YES, ETCの予定のみを対象とする
+    // ステータスがOWNER, YESの予定のみを対象とする
     if (status === 'OWNER' || status === 'YES') {
       // イベントの情報を取得
       const eventContent = getEventContent(event);
@@ -286,8 +289,8 @@ function calculateWorkHoursByColor(
   return workHoursMap;
 }
 
-// スプレッドシートのG列に色番号、H列に計算した工数合計を記載する関数
-function writeWorkHoursToSheet(
+// 集計結果ををシートに記載する関数
+function writeSummaryToSheet(
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
   workHoursMap: Map<string, number>,
   colorMap: { [key: string]: string },
@@ -295,6 +298,10 @@ function writeWorkHoursToSheet(
 ): GoogleAppsScript.Spreadsheet.Range {
   // デフォルトカラーの色番号（'0'）の工数をMapから削除する
   workHoursMap.delete('0');
+
+  // 全工数の合計を計算する
+  let totalWorkHours = 0;
+  workHoursMap.forEach(hours => (totalWorkHours += hours));
 
   // ヘッダー行を考慮して2行目から開始
   let row = 2;
@@ -307,9 +314,13 @@ function writeWorkHoursToSheet(
     // イベントの色名をラベル名に変換
     const labelName = LabelMap[colorName];
 
+    // イベントの工数の割合を計算
+    const workPercentage = ((hours / totalWorkHours) * 100).toFixed(1);
+
     // イベントの情報をシートに書き込む
     sheet.getRange('I' + row).setValue(labelName);
     sheet.getRange('J' + row).setValue(hours);
+    sheet.getRange('K' + row).setValue(workPercentage);
     row++;
   });
 
@@ -323,11 +334,11 @@ function createOrUpdateChart(
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
   dataRange: GoogleAppsScript.Spreadsheet.Range
 ): void {
-  // チャートの種類を棒グラフに指定
-  const chartType = Charts.ChartType.BAR;
+  // チャートの種類を円グラフに指定
+  const chartType = Charts.ChartType.PIE;
 
-  // チャートの位置をL列（12列目）に設定
-  const column = 12;
+  // チャートの位置をM列（13列目）に設定
+  const column = 13;
 
   // シートから既存のチャートを取得
   const charts = sheet.getCharts();
