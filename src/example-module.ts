@@ -306,22 +306,30 @@ function writeSummaryToSheet(
   // ヘッダー行を考慮して2行目から開始
   let row = 2;
 
-  // 色番号ごとの工数をソートされたエントリを基にシートに書き込む
-  workHoursMap.forEach((hours, color) => {
-    // イベントの色番号を色名に変換
-    const colorName = colorMap[color];
-
-    // イベントの色名をラベル名に変換
+  // LabelMapを使用してラベル名一覧を順番にシートに書き込む
+  Object.keys(LabelMap).forEach(colorName => {
+    // カラー名に対応するラベル名を取得
     const labelName = LabelMap[colorName];
 
-    // イベントの工数の割合を計算
-    const workPercentage = ((hours / totalWorkHours) * 100).toFixed(1);
+    // ラベル名が空文字でない場合のみ処理を行う
+    if (labelName) {
+      // 色名に対応する色番号を取得
+      const color = Object.keys(colorMap).find(
+        key => colorMap[key] === colorName
+      );
+      // 色番号に対応する工数を取得(存在しない場合は0)
+      const hours = color ? workHoursMap.get(color) : 0;
+      // イベントの工数の割合を計算(存在しない場合は0)
+      const workPercentage = hours
+        ? ((hours / totalWorkHours) * 100).toFixed(1)
+        : 0;
 
-    // イベントの情報をシートに書き込む
-    sheet.getRange('I' + row).setValue(labelName);
-    sheet.getRange('J' + row).setValue(hours);
-    sheet.getRange('K' + row).setValue(workPercentage);
-    row++;
+      // イベントの情報をシートに書き込む
+      sheet.getRange('I' + row).setValue(labelName);
+      sheet.getRange('J' + row).setValue(hours);
+      sheet.getRange('K' + row).setValue(workPercentage);
+      row++;
+    }
   });
 
   // ラベル名一覧と工数合計が記載されている範囲を指定
