@@ -70,63 +70,7 @@ rollup.config.mjs already exists
 -> Apps Script Link: https://script.google.com/d/xxx/edit
 ```
 
-4. Googleアカウントの認証を実施
-
-```bash
-npx clasp login
-```
-
-5. 環境変数として、Google Calender IDを配列で設定(複数指定できるよう配列にしているだけなので、配列の中身は単一でも問題ありません)
-
-```bash
-export CALENDER_ID_ARRAY="['xxxxxxxx','xxxxxxxx','xxxxxxxx']"
-```
-
-6. 環境変数として、Google Calenderの予定の色に対応したラベル名を指定(使用しない色については空文字を設定してください)
-
-```bash
-export LAVENDER_LABEL=""
-export SAGE_LABEL=""
-export GRAPE_LABEL=""
-export FLAMINGO_LABEL=""
-export BANANA_LABEL=""
-export MANDARIN_LABEL=""
-export PEACOCK_LABEL=""
-export GRAPHITE_LABEL=""
-export BLUEBERRY_LABEL=""
-export BASIL_LABEL=""
-export TOMATO_LABEL=""
-```
-
-7. 5/6で指定した環境変数を使用し、GAS実行用ファイルである`src/index.ts`を作成
-
-```bash
-cat <<EOF > src/index.ts
-import { main } from './example-module';
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function handler(): void {
-  main(
-    ${CALENDER_ID_ARRAY},
-    {
-      ラベンダー: '${LAVENDER_LABEL}',
-      セージ: '${SAGE_LABEL}',
-      ブドウ: '${GRAPE_LABEL}',
-      フラミンゴ: '${FLAMINGO_LABEL}',
-      バナナ: '${BANANA_LABEL}',
-      ミカン: '${MANDARIN_LABEL}',
-      ピーコック: '${PEACOCK_LABEL}',
-      グラファイト: '${GRAPHITE_LABEL}',
-      ブルーベリー: '${BLUEBERRY_LABEL}',
-      バジル: '${BASIL_LABEL}',
-      トマト: '${TOMATO_LABEL}',
-    }
-  );
-}
-EOF
-```
-
-8. GASアプリをデプロイ
+1. GASアプリをデプロイ
 
 ```bash
 npm run deploy

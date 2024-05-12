@@ -14,30 +14,49 @@
  * limitations under the License.
  */
 
-export function main(
-  calendarIds: string[],
-  LabelMap: { [key: string]: string }
-): void {
-  const colorMap: { [key: string]: string } = {
-    '0': 'デフォルト', // カラーが設定されていない場合の色番号は'0とする
-    '1': 'ラベンダー',
-    '2': 'セージ',
-    '3': 'ブドウ',
-    '4': 'フラミンゴ',
-    '5': 'バナナ',
-    '6': 'ミカン',
-    '7': 'ピーコック',
-    '8': 'グラファイト',
-    '9': 'ブルーベリー',
-    '10': 'バジル',
-    '11': 'トマト',
-  };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function onOpen() {
+  // UIにカスタムメニューを追加
+  addCustomMenuToUi();
+  // シート1にプロパティを書き込む
+  writePropertyToSheet1();
+}
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function main(): void {
   // スプレッドシートをIDで読み込む
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = spreadsheet.getActiveSheet();
+
+  // B列のセルよりカレンダーID一覧を配列で取得
+  const calendarIds = sheet
+    .getRange('A2:A4')
+    .getValues()
+    .flat()
+    .filter(id => id !== '');
+
+  // C列のセルよりカラー名一覧を配列で取得
+  const colorNames = sheet.getRange('C2:C12').getValues().flat();
+
+  // D列のセルよりラベル名一覧を配列で取得
+  const labelNames = sheet.getRange('D2:D12').getValues().flat();
+
+  const colorMap: { [key: string]: string } = {
+    '0': 'デフォルト', // カラーが設定されていない場合の色番号は'0'とする
+  };
+
+  // 色番号とラベル名のペアをColorMapに追加
+  for (let i = 0; i < colorNames.length; i++) {
+    colorMap[String(i + 1)] = colorNames[i];
+  }
+
+  const labelMap: { [key: string]: string } = {};
+  for (let i = 0; i < colorNames.length; i++) {
+    labelMap[colorNames[i]] = labelNames[i];
+  }
 
   // 現在の年と月を取得または指定された年月を使用
-  const { year: currentYear, month: currentMonth } = getCurrentYearMonth();
+  const { year: currentYear, month: currentMonth } = getCurrentYearMonth(sheet);
 
   // 現在の月のシートを取得または作成
   const currentMonthSheet = getOrCreateCurrentMonthSheet(
@@ -78,7 +97,7 @@ export function main(
     currentMonthSheet,
     calendarNames,
     colorMap,
-    LabelMap
+    labelMap
   );
 
   // 色番号ごとの工数を計算
@@ -89,11 +108,146 @@ export function main(
     currentMonthSheet,
     workHoursMap,
     colorMap,
-    LabelMap
+    labelMap
   );
 
   // チャートを作成または更新
   createOrUpdateChart(currentMonthSheet, dataRange);
+}
+
+// カスタムメニューをUIに追加する関数
+function addCustomMenuToUi() {
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('カスタムメニュー').addItem('工数計算', 'main').addToUi();
+}
+
+// プロパティをデフォルトシートに書き込む関数
+function writePropertyToSheet1(): void {
+  // スプレッドシートをIDで読み込む
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = spreadsheet.getActiveSheet();
+
+  // シート1名を変更
+  const sheetName = 'プロパティ';
+  sheet.setName(sheetName);
+
+  // セルを読み込み
+  const cella1 = sheet.getRange('A1');
+  const cella2 = sheet.getRange('A2');
+  const cella3 = sheet.getRange('A3');
+  const cella4 = sheet.getRange('A4');
+  const cellc1 = sheet.getRange('C1');
+  const cellc2 = sheet.getRange('C2');
+  const cellc3 = sheet.getRange('C3');
+  const cellc4 = sheet.getRange('C4');
+  const cellc5 = sheet.getRange('C5');
+  const cellc6 = sheet.getRange('C6');
+  const cellc7 = sheet.getRange('C7');
+  const cellc8 = sheet.getRange('C8');
+  const cellc9 = sheet.getRange('C9');
+  const cellc10 = sheet.getRange('C10');
+  const cellc11 = sheet.getRange('C11');
+  const cellc12 = sheet.getRange('C12');
+  const celld1 = sheet.getRange('D1');
+  const celld2 = sheet.getRange('D2');
+  const celld3 = sheet.getRange('D3');
+  const celld4 = sheet.getRange('D4');
+  const celld5 = sheet.getRange('D5');
+  const celld6 = sheet.getRange('D6');
+  const celld7 = sheet.getRange('D7');
+  const celld8 = sheet.getRange('D8');
+  const celld9 = sheet.getRange('D9');
+  const celld10 = sheet.getRange('D10');
+  const celld11 = sheet.getRange('D11');
+  const celld12 = sheet.getRange('D12');
+  const cellf1 = sheet.getRange('F1');
+  const cellf2 = sheet.getRange('F2');
+  const cellf3 = sheet.getRange('F3');
+  const cellg1 = sheet.getRange('G1');
+  const cellg2 = sheet.getRange('G2');
+  const cellg3 = sheet.getRange('G3');
+
+  // セルに値を設定
+  cella1.setValue('カレンダーID一覧');
+  cellc1.setValue('カレンダー色');
+  cellc2.setValue('ラベンダー');
+  cellc3.setValue('セージ');
+  cellc4.setValue('ブドウ');
+  cellc5.setValue('フラミンゴ');
+  cellc6.setValue('バナナ');
+  cellc7.setValue('ミカン');
+  cellc8.setValue('ピーコック');
+  cellc9.setValue('グラファイト');
+  cellc10.setValue('ブルーベリー');
+  cellc11.setValue('バジル');
+  cellc12.setValue('トマト');
+  celld1.setValue('対応するラベル名');
+  cellf1.setValue('対象年月');
+  cellf2.setValue('対象年');
+  cellf3.setValue('対象月');
+  cellg1.setValue('値');
+
+  // ヘッダー行のセルを配列にまとめる
+  const headerCells = [cella1, cellc1, celld1, cellf1, cellg1];
+
+  headerCells.forEach(cell => {
+    // ヘッダー行のフォントを太字に設定
+    cell.setFontWeight('bold');
+    // ヘッダー行の背景色を設定
+    cell.setBackground('lightblue');
+  });
+
+  // 全てのセルを配列にまとめる
+  const cells = [
+    cella1,
+    cella2,
+    cella3,
+    cella4,
+    cellc1,
+    cellc2,
+    cellc3,
+    cellc4,
+    cellc5,
+    cellc6,
+    cellc7,
+    cellc8,
+    cellc9,
+    cellc10,
+    cellc11,
+    cellc12,
+    celld1,
+    celld2,
+    celld3,
+    celld4,
+    celld5,
+    celld6,
+    celld7,
+    celld8,
+    celld9,
+    celld10,
+    celld11,
+    celld12,
+    cellf1,
+    cellf2,
+    cellf3,
+    cellg1,
+    cellg2,
+    cellg3,
+  ];
+
+  cells.forEach(cell => {
+    // ヘッダー行の枠線を設定
+    cell.setBorder(
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      'black',
+      SpreadsheetApp.BorderStyle.SOLID
+    );
+  });
 }
 
 // 現在の月のシートを取得または作成する関数
@@ -126,7 +280,6 @@ function getCalendar(calendarId: string): GoogleAppsScript.Calendar.Calendar {
   }
   return calendar;
 }
-
 // 月初から月末までの開始時刻と終了時刻を取得する関数
 function getStartTimeAndEndTime(
   year: number,
@@ -218,7 +371,7 @@ function writeEventsToSheet(
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
   calendarNames: string[],
   colorMap: { [key: string]: string },
-  LabelMap: { [key: string]: string }
+  labelMap: { [key: string]: string }
 ): void {
   for (let i = 0; i < events.length; i++) {
     // イベントの情報を取得
@@ -233,7 +386,7 @@ function writeEventsToSheet(
     const colorName = colorMap[color];
 
     // イベントの色名をラベル名に変換
-    const labelName = LabelMap[colorName];
+    const labelName = labelMap[colorName];
 
     // ヘッダー行を考慮して2行目から開始
     const row = i + 2;
@@ -294,7 +447,7 @@ function writeSummaryToSheet(
   sheet: GoogleAppsScript.Spreadsheet.Sheet,
   workHoursMap: Map<string, number>,
   colorMap: { [key: string]: string },
-  LabelMap: { [key: string]: string }
+  labelMap: { [key: string]: string }
 ): GoogleAppsScript.Spreadsheet.Range {
   // デフォルトカラーの色番号（'0'）の工数をMapから削除する
   workHoursMap.delete('0');
@@ -306,10 +459,10 @@ function writeSummaryToSheet(
   // ヘッダー行を考慮して2行目から開始
   let row = 2;
 
-  // LabelMapを使用してラベル名一覧を順番にシートに書き込む
-  Object.keys(LabelMap).forEach(colorName => {
+  // labelMapを使用してラベル名一覧を順番にシートに書き込む
+  Object.keys(labelMap).forEach(colorName => {
     // カラー名に対応するラベル名を取得
-    const labelName = LabelMap[colorName];
+    const labelName = labelMap[colorName];
 
     // ラベル名が空文字でない場合のみ処理を行う
     if (labelName) {
@@ -374,25 +527,27 @@ function createOrUpdateChart(
 }
 
 // 現在の年と月を取得する関数
-function getCurrentYearMonth(): { year: number; month: number } {
-  // スクリプトのプロパティから年と月を取得
-  const scriptProperties = PropertiesService.getScriptProperties();
-  const propYear = scriptProperties.getProperty('YEAR');
-  const propMonth = scriptProperties.getProperty('MONTH');
+function getCurrentYearMonth(sheet: GoogleAppsScript.Spreadsheet.Sheet): {
+  year: number;
+  month: number;
+} {
+  // セルG2とG3の値を取得
+  const yearValue = sheet.getRange('G2').getValue();
+  const monthValue = sheet.getRange('G3').getValue();
 
-  // 環境変数が設定されている場合はそれを使用、そうでない場合は現在の年月を使用
-  const envYear = propYear ? Number(propYear) : undefined;
-  const envMonth = propMonth ? Number(propMonth) : undefined;
+  // セルG2とG3に値が設定されている場合はそれを使用、そうでない場合は現在の年月を使用
+  const year = yearValue ? Number(yearValue) : undefined;
+  const month = monthValue ? Number(monthValue) : undefined;
 
-  if (envYear !== undefined && envMonth !== undefined) {
-    // スクリプトのプロパティが設定されている場合はそれを使用
-    return { year: envYear, month: envMonth };
-  } else {
-    // 引数が与えられていない場合は現在の年月を返す
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1; // getMonth() は0から始まるため、1を足す
+  if (year !== undefined && month !== undefined) {
+    // セルG2とG3に値が設定されている場合はそれを使用
     return { year, month };
+  } else {
+    // セルG2とG3に値が設定されていない場合は現在の年月を返す
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1; // getMonth() は0から始まるため、1を足す
+    return { year: currentYear, month: currentMonth };
   }
 }
 
