@@ -70,7 +70,7 @@ rollup.config.mjs already exists
 -> Apps Script Link: https://script.google.com/d/xxx/edit
 ```
 
-1. GASアプリをデプロイ
+4. GASアプリをデプロイ
 
 ```bash
 npm run deploy
