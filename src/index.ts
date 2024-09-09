@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { numberOfCalenders } from './env';
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function onOpen() {
   // UIにカスタムメニューを追加
@@ -50,6 +52,7 @@ function main(): void {
     colorMap[String(i + 1)] = colorNames[i];
   }
 
+  // カラー名とラベル名のペアをLabelMapに追加
   const labelMap: { [key: string]: string } = {};
   for (let i = 0; i < colorNames.length; i++) {
     labelMap[colorNames[i]] = labelNames[i];
@@ -131,123 +134,49 @@ function writePropertyToSheet1(): void {
   const sheetName = 'プロパティ';
   sheet.setName(sheetName);
 
-  // セルを読み込み
-  const cella1 = sheet.getRange('A1');
-  const cella2 = sheet.getRange('A2');
-  const cella3 = sheet.getRange('A3');
-  const cella4 = sheet.getRange('A4');
-  const cellc1 = sheet.getRange('C1');
-  const cellc2 = sheet.getRange('C2');
-  const cellc3 = sheet.getRange('C3');
-  const cellc4 = sheet.getRange('C4');
-  const cellc5 = sheet.getRange('C5');
-  const cellc6 = sheet.getRange('C6');
-  const cellc7 = sheet.getRange('C7');
-  const cellc8 = sheet.getRange('C8');
-  const cellc9 = sheet.getRange('C9');
-  const cellc10 = sheet.getRange('C10');
-  const cellc11 = sheet.getRange('C11');
-  const cellc12 = sheet.getRange('C12');
-  const celld1 = sheet.getRange('D1');
-  const celld2 = sheet.getRange('D2');
-  const celld3 = sheet.getRange('D3');
-  const celld4 = sheet.getRange('D4');
-  const celld5 = sheet.getRange('D5');
-  const celld6 = sheet.getRange('D6');
-  const celld7 = sheet.getRange('D7');
-  const celld8 = sheet.getRange('D8');
-  const celld9 = sheet.getRange('D9');
-  const celld10 = sheet.getRange('D10');
-  const celld11 = sheet.getRange('D11');
-  const celld12 = sheet.getRange('D12');
-  const cellf1 = sheet.getRange('F1');
-  const cellf2 = sheet.getRange('F2');
-  const cellf3 = sheet.getRange('F3');
-  const cellg1 = sheet.getRange('G1');
-  const cellg2 = sheet.getRange('G2');
-  const cellg3 = sheet.getRange('G3');
-
-  // セルに値を設定
-  cella1.setValue('カレンダーID一覧');
-  cellc1.setValue('カレンダー色');
-  cellc2.setValue('ラベンダー');
-  cellc3.setValue('セージ');
-  cellc4.setValue('ブドウ');
-  cellc5.setValue('フラミンゴ');
-  cellc6.setValue('バナナ');
-  cellc7.setValue('ミカン');
-  cellc8.setValue('ピーコック');
-  cellc9.setValue('グラファイト');
-  cellc10.setValue('ブルーベリー');
-  cellc11.setValue('バジル');
-  cellc12.setValue('トマト');
-  celld1.setValue('対応するラベル名');
-  cellf1.setValue('対象年月');
-  cellf2.setValue('対象年');
-  cellf3.setValue('対象月');
-  cellg1.setValue('値');
-
-  // ヘッダー行のセルを配列にまとめる
-  const headerCells = [cella1, cellc1, celld1, cellf1, cellg1];
-
-  headerCells.forEach(cell => {
-    // ヘッダー行のフォントを太字に設定
-    cell.setFontWeight('bold');
-    // ヘッダー行の背景色を設定
-    cell.setBackground('lightblue');
-  });
-
-  // 全てのセルを配列にまとめる
-  const cells = [
-    cella1,
-    cella2,
-    cella3,
-    cella4,
-    cellc1,
-    cellc2,
-    cellc3,
-    cellc4,
-    cellc5,
-    cellc6,
-    cellc7,
-    cellc8,
-    cellc9,
-    cellc10,
-    cellc11,
-    cellc12,
-    celld1,
-    celld2,
-    celld3,
-    celld4,
-    celld5,
-    celld6,
-    celld7,
-    celld8,
-    celld9,
-    celld10,
-    celld11,
-    celld12,
-    cellf1,
-    cellf2,
-    cellf3,
-    cellg1,
-    cellg2,
-    cellg3,
+  // ヘッダーを生成
+  const calenderHeader = ['Calender IDs'];
+  const colorHeaders = [
+    'Lavender',
+    'Sage',
+    'Grape',
+    'Flamingo',
+    'Banana',
+    'Tangerine',
+    'Peacock',
+    'Graphite',
+    'Blueberry',
+    'Basil',
+    'Tomato',
   ];
+  const timeHeaders = ['Year', 'Month'];
 
-  cells.forEach(cell => {
-    // ヘッダー行の枠線を設定
-    cell.setBorder(
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      'black',
-      SpreadsheetApp.BorderStyle.SOLID
-    );
-  });
+  // ヘッダー行を設定
+  const headers = [calenderHeader, colorHeaders, timeHeaders];
+  const headerRange = sheet.getRange(1, 1, 1, headers.length);
+  headerRange.setValues([headers]);
+  headerRange.setFontWeight('bold');
+  headerRange.setBackground('lightblue');
+
+  // すべてのセルの範囲を取得
+  const allRange = sheet.getRange(1, 1, numberOfCalenders + 1, headers.length);
+
+  // すべてのセルに枠線を設定
+  allRange.setBorder(
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    'black',
+    SpreadsheetApp.BorderStyle.SOLID
+  );
+
+  // 列の幅を自動調整
+  sheet.autoResizeColumns(1, headers.length);
+
+  console.log('プロパティシートが作成されました。');
 }
 
 // 現在の月のシートを取得または作成する関数
@@ -309,60 +238,35 @@ function getEventsfromCalendar(
 // ヘッダー行をシートに書き込む関数
 function writeHeaderColumn(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
   // ヘッダー行を読み込み
-  const cella1 = sheet.getRange('A1');
-  const cellb1 = sheet.getRange('B1');
-  const cellc1 = sheet.getRange('C1');
-  const celld1 = sheet.getRange('D1');
-  const celle1 = sheet.getRange('E1');
-  const cellf1 = sheet.getRange('F1');
-  const cellg1 = sheet.getRange('G1');
-  const celli1 = sheet.getRange('I1');
-  const cellj1 = sheet.getRange('J1');
-  const cellk1 = sheet.getRange('K1');
-
-  // ヘッダー行に値を設定
-  cella1.setValue('カレンダー名');
-  cellb1.setValue('タイトル');
-  cellc1.setValue('色');
-  celld1.setValue('ラベル名');
-  celle1.setValue('ステータス');
-  cellf1.setValue('開始日時');
-  cellg1.setValue('工数(h)');
-  celli1.setValue('ラベル名一覧');
-  cellj1.setValue('工数合計(h)');
-  cellk1.setValue('工数割合(%)');
-
-  // ヘッダー行のセルを配列にまとめる
-  const cells = [
-    cella1,
-    cellb1,
-    cellc1,
-    celld1,
-    celle1,
-    cellf1,
-    cellg1,
-    celli1,
-    cellj1,
-    cellk1,
+  const headers = [
+    'カレンダー名',
+    'タイトル',
+    '色',
+    'ラベル名',
+    'ステータス',
+    '開始日時',
+    '工数(h)',
+    '',
+    'ラベル名一覧',
+    '工数合計(h)',
+    '工数割合(%)',
   ];
 
-  cells.forEach(cell => {
-    // ヘッダー行のフォントを太字に設定
-    cell.setFontWeight('bold');
-    // ヘッダー行の背景色を設定
-    cell.setBackground('orange');
-    // ヘッダー行の枠線を設定
-    cell.setBorder(
-      true,
-      true,
-      true,
-      true,
-      true,
-      true,
-      'black',
-      SpreadsheetApp.BorderStyle.SOLID
-    );
-  });
+  const headerRange = sheet.getRange(1, 1, 1, headers.length);
+
+  headerRange.setValues([headers]);
+  headerRange.setFontWeight('bold');
+  headerRange.setBackground('orange');
+  headerRange.setBorder(
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    'black',
+    SpreadsheetApp.BorderStyle.SOLID
+  );
 }
 
 // イベントをシートに書き込む関数
@@ -373,32 +277,35 @@ function writeEventsToSheet(
   colorMap: { [key: string]: string },
   labelMap: { [key: string]: string }
 ): void {
-  for (let i = 0; i < events.length; i++) {
-    // イベントの情報を取得
-    const event = events[i];
-    const { title, color, status, startTime, durationHours } =
-      getEventContent(event);
-
+  // イベントデータを2次元配列に変換
+  const eventData = events.map((event, index) => {
+    // イベントの詳細情報を取得
+    const { title, color, status, startTime, durationHours } = getEventContent(event);
     // イベントに対応するカレンダー名を取得
-    const calendarName = calendarNames[i];
-
+    const calendarName = calendarNames[index];
     // イベントの色番号を色名に変換
     const colorName = colorMap[color];
-
     // イベントの色名をラベル名に変換
     const labelName = labelMap[colorName];
 
-    // ヘッダー行を考慮して2行目から開始
-    const row = i + 2;
+    // イベント情報を配列として返す
+    return [
+      calendarName,
+      title,
+      colorName,
+      labelName,
+      status,
+      startTime,
+      durationHours.toString()
+    ];
+  });
 
-    // イベントの情報をシートに書き込む
-    sheet.getRange('A' + row).setValue(calendarName);
-    sheet.getRange('B' + row).setValue(title);
-    sheet.getRange('C' + row).setValue(colorName);
-    sheet.getRange('D' + row).setValue(labelName);
-    sheet.getRange('E' + row).setValue(status);
-    sheet.getRange('F' + row).setValue(startTime);
-    sheet.getRange('G' + row).setValue(durationHours.toString());
+  // イベントデータが存在する場合のみシートに書き込み
+  if (eventData.length > 0) {
+    // 書き込む範囲を取得（2行目から開始、A列からG列まで）
+    const range = sheet.getRange(2, 1, eventData.length, 7);
+    // データを一括で書き込み
+    range.setValues(eventData);
   }
 }
 
@@ -449,45 +356,45 @@ function writeSummaryToSheet(
   colorMap: { [key: string]: string },
   labelMap: { [key: string]: string }
 ): GoogleAppsScript.Spreadsheet.Range {
-  // デフォルトカラーの色番号（'0'）の工数をMapから削除する
+  // デフォルトカラー（'0'）の工数を削除
   workHoursMap.delete('0');
 
-  // 全工数の合計を計算する
-  let totalWorkHours = 0;
-  workHoursMap.forEach(hours => (totalWorkHours += hours));
+  // 全工数の合計を計算
+  const totalWorkHours = Array.from(workHoursMap.values()).reduce(
+    (sum, hours) => sum + hours,
+    0
+  );
 
-  // ヘッダー行を考慮して2行目から開始
-  let row = 2;
-
-  // labelMapを使用してラベル名一覧を順番にシートに書き込む
-  Object.keys(labelMap).forEach(colorName => {
-    // カラー名に対応するラベル名を取得
-    const labelName = labelMap[colorName];
-
-    // ラベル名が空文字でない場合のみ処理を行う
-    if (labelName) {
+  // サマリーデータの生成
+  const summaryData = Object.entries(labelMap)
+    // ラベル名が存在する項目のみをフィルタリング
+    .filter(([, labelName]) => labelName)
+    // 各ラベルの情報を配列に変換
+    .map(([colorName, labelName]) => {
       // 色名に対応する色番号を取得
       const color = Object.keys(colorMap).find(
         key => colorMap[key] === colorName
       );
-      // 色番号に対応する工数を取得(存在しない場合は0)
-      const hours = color ? workHoursMap.get(color) : 0;
-      // イベントの工数の割合を計算(存在しない場合は0)
+      // 色番号に対応する工数を取得（存在しない場合は0）
+      const hours = color ? workHoursMap.get(color) || 0 : 0;
+      // 工数の割合を計算（小数点以下1桁まで）
       const workPercentage = hours
         ? ((hours / totalWorkHours) * 100).toFixed(1)
-        : 0;
+        : '0';
+      // [ラベル名, 工数, 割合] の形式で返す
+      return [labelName, hours, workPercentage];
+    });
 
-      // イベントの情報をシートに書き込む
-      sheet.getRange('I' + row).setValue(labelName);
-      sheet.getRange('J' + row).setValue(hours);
-      sheet.getRange('K' + row).setValue(workPercentage);
-      row++;
-    }
-  });
+  // データが存在する場合のみシートに書き込み
+  if (summaryData.length > 0) {
+    // 書き込む範囲を取得（2行目、I列から開始）
+    const range = sheet.getRange(2, 9, summaryData.length, 3);
+    // データを一括で書き込み
+    range.setValues(summaryData);
+  }
 
-  // ラベル名一覧と工数合計が記載されている範囲を指定
-  const dataRange = sheet.getRange('I2:J' + (row - 1));
-  return dataRange;
+  // ラベル名と工数のデータ範囲（I列とJ列）を返す
+  return sheet.getRange(2, 9, summaryData.length, 2);
 }
 
 //
