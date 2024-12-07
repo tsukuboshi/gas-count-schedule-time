@@ -75,9 +75,3 @@ rollup.config.mjs already exists
 ```bash
 npm run deploy
 ```
-
-## 使い方
-
-以下を参考にしてください。  
-
-[Googleカレンダーの予定から色毎に工数をカウントし集計するGASアプリを作ってみた](https://zenn.dev/tsukuboshi/articles/31c95d863d8896)
