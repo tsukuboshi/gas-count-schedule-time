@@ -70,8 +70,20 @@ rollup.config.mjs already exists
 -> Apps Script Link: https://script.google.com/d/xxx/edit
 ```
 
-4. GASアプリをデプロイ
+4. Googleアカウントの認証を実施
+
+```bash
+npx clasp login
+```
+
+5. GASアプリをデプロイ
 
 ```bash
 npm run deploy
+```
+
+6. 以下コマンドでスプレッドシートを開く
+
+```bash
+npx clasp open --addon
 ```
